@@ -42,5 +42,18 @@ export class Snake {
         if(this.x < 0 || this.x > STAGE-1 || this.y < 0 || this.y > STAGE-1){
             this.status = false;
         }
+        for(let i = 0;i < this.bx.length; i++){
+            if(this.x === this.bx[i] && this.y === this.by[i]){
+                this.status = false;
+            }
+        }
+    }
+
+    draw(ctx, GRID){
+        ctx.fillStyle = 'green';
+        ctx.fillRect(this.x*GRID, this.y*GRID, GRID-2, GRID-2);
+        for(let i = 0; i < this.bx.length; i++){
+            ctx.fillRect(this.bx[i]*GRID, this.by[i]*GRID, GRID-2, GRID-2);
+        }
     }
 }

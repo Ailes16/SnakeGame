@@ -1,10 +1,15 @@
 /* import */
 import {Snake} from './modules/snake.js';
+import {Apple} from './modules/apple.js';
 
 let mySnake;
+let apple;
 let game;
 let status = false;
-const timer = 10000/15;
+const timer = 1000/15;
+
+const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop');
 
 /* ゲーム画面の作成 */
 const canvas = document.querySelector('canvas');
@@ -21,6 +26,8 @@ const init = () => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     mySnake = new Snake(5,8);
+    apple = new Apple(STAGE);
+    draw();
     console.log(mySnake.x,mySnake.y,mySnake.direction);
 }
 
@@ -30,11 +37,18 @@ const loop = () => {
 
     mySnake.move();
     draw();
+
     mySnake.judge(STAGE);
     if(!mySnake.status){
         end();
     }
-    console.log(mySnake.x,mySnake.y,mySnake.direction);
+
+    if(mySnake.x === apple.x && mySnake.y === apple.y){
+        mySnake.tail++;
+        apple = new Apple(STAGE);
+    }
+
+    // console.log(mySnake.x,mySnake.y,mySnake.direction);
 }
 
 /* ゲームエンド */
@@ -45,18 +59,25 @@ const end = () => {
 
 /* 描画 */
 const draw = () => {
-    ctx.fillStyle = 'green';
-    ctx.fillRect(mySnake.x*GRID, mySnake.y*GRID, GRID-2, GRID-2);
-    for(let i = 0; i < mySnake.bx.length; i++){
-        ctx.fillRect(mySnake.bx[i]*GRID, mySnake.by[i]*GRID, GRID-2, GRID-2);
-    }
+    // アップル
+    apple.draw(ctx, GRID);
+    // スネーク
+    mySnake.draw(ctx, GRID);
 }
 
 /* メイン処理 */
-init();
 
 /* キー操作 */
 document.addEventListener('keydown', e => {
+
+    if(e.key == ' '){
+        if(!status){
+            init();
+        }else{
+            end();
+        }
+    }
+
     if(status){
         switch(e.key){
             case 'ArrowLeft':
@@ -80,5 +101,18 @@ document.addEventListener('keydown', e => {
                 }
                 break;
         }
+    }
+})
+
+/* ボタン操作 */
+startButton.addEventListener('click', () => {
+    if(!status){
+        init();
+    }
+})
+
+stopButton.addEventListener('click', () => {
+    if(status){
+        end();
     }
 })
